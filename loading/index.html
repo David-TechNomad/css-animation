@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>loading</title>
+    <style>
+        .progress-box {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        /* 加载进度 */
+        .progress {
+            height: 12px;
+            width: 300px;
+            margin: 10px 0;
+            background-color: #f0f2f3;
+        }
+
+        .progress::before {
+            content: '';
+            display: block;
+            width: 0;
+            height: 100%;
+            background-color: #2486ff;
+        }
+
+        .progress.active::before {
+            transition: 100s width cubic-bezier(.08, .81, .29, .99);
+            width: 100%;
+        }
+
+        /* 加载进度带percent */
+        @property --percent {
+            syntax: '<integer>';
+            inherits: false;
+            initial-value: 0;
+        }
+
+        .progress2 {
+            width: 300px;
+            line-height: 20px;
+            margin: 10px 0;
+            background-color: #f0f2f3;
+        }
+
+        .progress2::before {
+            --percent: 0;
+            counter-reset: progress var(--percent);
+            content: counter(progress) '%\2002';
+            display: block;
+            width: calc(300px * var(--percent) / 100);
+            font-size: 12px;
+            color: #fff;
+            background-color: #2486ff;
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: none;
+        }
+
+        .progress2.active::before {
+            --percent: 99;
+            transition: 100s --percent cubic-bezier(.08, .81, .29, .99);
+        }
+
+
+
+        /* 加载进度纯数字 */
+        .loading-num-box {
+            margin: 10px 0;
+        }
+
+        .loading-span {
+            color: gray;
+        }
+
+        .loading-num::after {
+            --percent: 0;
+            counter-reset: progress var(--percent);
+            content: counter(progress);
+            transition: none;
+        }
+
+        .loading-num.running::after {
+            --percent: 99;
+            transition: 100s --percent cubic-bezier(.08, .81, .29, .99);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="progress-box">
+        <div>
+            加载进度： <div class="progress"></div>
+            <button id="button">开始加载</button>
+        </div>
+        <div>
+            加载进度带percent： <div class="progress2"></div>
+            <button id="button2">开始加载</button>
+        </div>
+        <div>
+            加载进度纯数字：
+            <div class="loading-num-box">
+                <span class="loading-span">加载中...<output class="loading-num"></output>%</span>
+            </div>
+
+            <button id="button3">开启loading</button>
+        </div>
+    </div>
+
+
+    <script>
+        /* 加载进度 */
+        var progress = document.querySelector('.progress');
+        var button = document.getElementById('button');
+        button.onclick = function () {
+            progress.classList.remove('active');
+            progress.offsetHeight;
+            progress.classList.add('active');
+        };
+        /* 加载进度带percent */
+        var progress2 = document.querySelector('.progress2');
+        var button2 = document.getElementById('button2');
+        button2.onclick = function () {
+            progress2.classList.remove('active');
+            progress2.offsetHeight;
+            progress2.classList.add('active');
+        };
+        /* 加载进度纯数字 */
+        var button3 = document.getElementById('button3');
+        button3.onclick = function () {
+            const eleOutput = document.querySelector('.loading-num');
+            if (eleOutput) {
+                eleOutput.classList.remove('running');
+                this.closest('div').offsetWidth;
+                eleOutput.classList.add('running');
+            }
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 计时器</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            background: aliceblue;
+        }
+
+        @font-face {
+            font-family: "DigitalNumbers-Regular";
+            src: local('☺'),
+                url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAT4AAwAAAAAB8gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAABHAAAAEMAAABWVxZg3mNtYXAAAAFgAAAALAAAADQADACNY3Z0IAAAAYwAAAAEAAAABAAhAnlnYXNwAAABkAAAAAgAAAAI//8AA2dseWYAAAGYAAABmAAAA5bu8/QQaGVhZAAAAzAAAAA2AAAANgWFshdoaGVhAAADaAAAAB8AAAAkBvEBdWhtdHgAAAOIAAAAHAAAABwHoQRFbG9jYQAAA6QAAAAaAAAAGgX9BPFtYXhwAAADwAAAAB8AAAAgAF0AfW5hbWUAAAPgAAABAQAAAfgnQkHCcG9zdAAABOQAAAATAAAAIP+GADJ4nGNgZFZgnMDAysDA1MW0m4GBoQdCM95nMGRkAooysDIzwAAjAxIISHNNYXBgMGCwYj737zADA/M5RluYGgC/BAqjAHicY2BgYGJgYGAGYhEgyQimWRgUgDQLEIL4Vv//A0mD////XwTzGQBR3AaWACECeQAAAAH//wACeJx9kj1PwlAUhs+5pdZg1FSCTdRosUUGXQxpOrNAHJmIYzEGE+5owEVjXJxISmQgcTQxYSRhx3/g5B9wdUZYKN7SD9pSbNKluX3Oc9/3wBqYs1NicgpwIMAGbEMKJABJz0sopYVMTtMxIyicKKVRzGn92tiwFEpxSqkl4/Bq9EyxTb/Yl5+bUbX2WyWb1HrCoTHBS6tgjIFxzVmFmGQCAAlYB0ghg3IMZhKglKNEnebZj/jtnOfhhRm1XKMt2IHdhU/qJKdnJMFWygZ0bhW1hGKxaHVtJWz4Qvh6sK9pOjmnBY/eZ/T2Ml1nUnyYPrieGEf1utU8Vosu/aM6xkad0c+YsRphJ/ybcpCcs4FfULNuhMRk0TU94Ts7vp4PKwWT40PdrHa1y7GTkIPgrlNOVNXpBiDau83eC/ceM8GvPmaMtwDRURwMWCodf9I8Ey9i0mH5ym6sPWd93DSFWMPDfx2XVjTqGd7ViGow94o7OenlzsdPC7e5mNJbiSdYhjf8JBfzewHm04rIXiw/sAfle3x//AN5pfwqAAEAAAABGhzL3f3XXw889QALA+gAAAAA0Zhu+QAAAADRreWM/4/+wwORA84AAAAIAAIAAAAAAAB4nGNgZGBgPvfvMJBU+N//v595IgNQBAUwAQCiWgZqAAFsACEDIACQAJAAkwCxAJAAkACQALQAkACQAVEAAAAAADEASQB4AKYAzgD8ATEBTQGKAbkBywAAeJxjYGRgYOBh8GHgZwABJiBmZACJOTDogQQADSgA2wB4nH2QMU7DQBBFX0gA0XAE5JJISQiRoKACgSgoKAKioEuCY0dyCHJMwWU4ASeh5kA82ysUp0Cr2fk782f+7AD7PNOm1TkAfvgOuMURXwHvcMhnwG0euQu4s8HZFfcC3hPBDQsSrWBCxj3vLJkSk7Omz1iUGMvM5jyF+IIVr0QMPacMtCEjbqtoUfncqljGyOxQf6E1laItrZpzrmZpo6rz2Zb+/x2u1X3jQ1yyUlkRx8zoVnPU/XriBzOxzNQu5S+uRBnzil1WFebWTnPiqdVSdab+ZKbC0mi5mYn+pTFP327N7c3DRiJfm5oD71rz0vqVJ/EVWzuxW/an1P0FQDlNIQAAAHicY2BmAIP/zQxGDFgAAChEAbgA) format('woff');
+
+        }
+
+        @property --m {
+            syntax: '<integer>';
+            inherits: false;
+            initial-value: 0;
+        }
+
+        @property --s {
+            syntax: '<integer>';
+            inherits: false;
+            initial-value: 0;
+        }
+
+        @property --ms {
+            syntax: '<integer>';
+            inherits: false;
+            initial-value: 0;
+        }
+
+        .counter {
+            display: grid;
+            gap: 10px;
+            grid-template-areas:
+                "clock clock"
+                "start reset"
+        }
+
+        .clock {
+            grid-area: clock;
+            text-align: center;
+            font-size: 60px;
+            padding: .2em .5em;
+            border: 5px solid rgba(255, 255, 255, .3);
+            font-family: monospace;
+            /* font-family: DigitalNumbers-Regular; */
+            background: #3a3a3a;
+            color: #fff;
+            counter-reset: minitus var(--m) seconds var(--s) ms var(--ms);
+            animation: minitus 3600s infinite steps(60, end),
+                seconds 60s infinite steps(60, end),
+                ms 1s infinite steps(100, end);
+            animation-play-state: paused;
+        }
+
+        .clock::before {
+            content: counter(minitus, decimal-leading-zero) ':' counter(seconds, decimal-leading-zero) ':' counter(ms, decimal-leading-zero);
+            text-shadow: 3px 3px 3px black;
+        }
+
+        .btn {
+            text-align: center;
+            padding: .5em;
+            font-size: 24px;
+            background-color: royalblue;
+            color: #fff;
+            grid-area: start;
+            user-select: none;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .reset {
+            grid-area: reset;
+            background-color: #F44336;
+        }
+
+        .start::before {
+            content: '开始';
+        }
+
+        :checked~.clock {
+            animation-play-state: running;
+        }
+
+        :checked~.start::before {
+            content: '暂停';
+        }
+
+        :checked~.reset {
+            opacity: .65;
+            pointer-events: none;
+        }
+
+        .reset:active+.clock {
+            animation: none;
+        }
+
+        @keyframes minitus {
+            to {
+                --m: 59
+            }
+        }
+
+        @keyframes seconds {
+            to {
+                --s: 59
+            }
+        }
+
+        @keyframes ms {
+            to {
+                --ms: 99
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>CSS 计时器</h1>
+    <div class="counter">
+        <input type="checkbox" id="start" hidden>
+        <label class="btn start" for="start"></label>
+        <label class="btn reset">重置</label>
+        <div class="clock"></div>
+    </div>
+</body>
+
+</html>
